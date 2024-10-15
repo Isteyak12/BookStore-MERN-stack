@@ -3,7 +3,7 @@ import BackButton from '../components/BackButton';
 import Spinner from '../components/Spinner';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import { useSnackbar } from 'notistack';
 
 const CreateBooks = () => {
   const [title, setTitle] = useState('');
@@ -11,7 +11,8 @@ const CreateBooks = () => {
   const [publishYear, setPublishYear] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  
+  const { enqueueSnackbar } = useSnackbar();
+
   const handleSaveBook = () => {
     const data = {
       title,
@@ -22,15 +23,15 @@ const CreateBooks = () => {
     axios
       .post('http://localhost:5555/books', data)
       .then(() => {
-        // Handle successful book creation here
         setLoading(false);
+        enqueueSnackbar('Book Created successfully', { variant: 'success' });
         navigate('/');
       })
       .catch((error) => {
-        // Handle errors here
         setLoading(false);
-        alert('An error happened. Please Check console')
-        console.error(error);
+        // alert('An error happened. Please Chack console');
+        enqueueSnackbar('Error', { variant: 'error' });
+        console.log(error);
       });
   };
 
@@ -46,7 +47,7 @@ const CreateBooks = () => {
             type='text'
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className='border-2 border-gray-500 px-4 py-2 w-full' // Add your input styling here
+            className='border-2 border-gray-500 px-4 py-2 w-full'
           />
         </div>
         <div className='my-4'>
@@ -55,7 +56,7 @@ const CreateBooks = () => {
             type='text'
             value={author}
             onChange={(e) => setAuthor(e.target.value)}
-            className='border-2 border-gray-500 px-4 py-2 w-full' // Add your input styling here
+            className='border-2 border-gray-500 px-4 py-2  w-full '
           />
         </div>
         <div className='my-4'>
@@ -64,11 +65,11 @@ const CreateBooks = () => {
             type='number'
             value={publishYear}
             onChange={(e) => setPublishYear(e.target.value)}
-            className='border-2 border-gray-500 px-4 py-2 w-full' // Add your input styling here
+            className='border-2 border-gray-500 px-4 py-2  w-full '
           />
         </div>
         <button className='p-2 bg-sky-300 m-8' onClick={handleSaveBook}>
-          Save 
+          Save
         </button>
       </div>
     </div>

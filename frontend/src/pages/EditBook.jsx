@@ -3,7 +3,7 @@ import BackButton from '../components/BackButton';
 import Spinner from '../components/Spinner';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-
+import { useSnackbar } from 'notistack';
 
 const EditBook = () => {
   const [title, setTitle] = useState('');
@@ -11,22 +11,24 @@ const EditBook = () => {
   const [publishYear, setPublishYear] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const {id} =useParams();
-  useEffect(()=>{
+  const {id} = useParams();
+  const { enqueueSnackbar } = useSnackbar();
+
+  useEffect(() => {
     setLoading(true);
     axios.get(`http://localhost:5555/books/${id}`)
-    .then((response)=> {
-      setAuthor(response.data.author)
-      setPublishYear(response.data.publishYear)
-      setTitle(response.data.title)
-      setLoading(false)
-    }).catch((error) =>
-    {
-      setLoading(false);
-      alert('An error happened. Please check console')
-      console.log(error);
-    });
+    .then((response) => {
+        setAuthor(response.data.author);
+        setPublishYear(response.data.publishYear)
+        setTitle(response.data.title)
+        setLoading(false);
+      }).catch((error) => {
+        setLoading(false);
+        alert('An error happened. Please Chack console');
+        console.log(error);
+      });
   }, [])
+  
   const handleEditBook = () => {
     const data = {
       title,
@@ -37,15 +39,15 @@ const EditBook = () => {
     axios
       .put(`http://localhost:5555/books/${id}`, data)
       .then(() => {
-        // Handle successful book creation here
         setLoading(false);
+        enqueueSnackbar('Book Edited successfully', { variant: 'success' });
         navigate('/');
       })
       .catch((error) => {
-        // Handle errors here
         setLoading(false);
-        alert('An error happened. Please Check console')
-        console.error(error);
+        // alert('An error happened. Please Chack console');
+        enqueueSnackbar('Error', { variant: 'error' });
+        console.log(error);
       });
   };
 
@@ -61,7 +63,7 @@ const EditBook = () => {
             type='text'
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className='border-2 border-gray-500 px-4 py-2 w-full' // Add your input styling here
+            className='border-2 border-gray-500 px-4 py-2 w-full'
           />
         </div>
         <div className='my-4'>
@@ -70,7 +72,7 @@ const EditBook = () => {
             type='text'
             value={author}
             onChange={(e) => setAuthor(e.target.value)}
-            className='border-2 border-gray-500 px-4 py-2 w-full' // Add your input styling here
+            className='border-2 border-gray-500 px-4 py-2  w-full '
           />
         </div>
         <div className='my-4'>
@@ -79,15 +81,15 @@ const EditBook = () => {
             type='number'
             value={publishYear}
             onChange={(e) => setPublishYear(e.target.value)}
-            className='border-2 border-gray-500 px-4 py-2 w-full' // Add your input styling here
+            className='border-2 border-gray-500 px-4 py-2  w-full '
           />
         </div>
         <button className='p-2 bg-sky-300 m-8' onClick={handleEditBook}>
-          Save 
+          Save
         </button>
       </div>
     </div>
-  );
+  )
 }
 
 export default EditBook
